@@ -45,7 +45,7 @@ class CapsulecrmStream(RESTStream):
             next_page_token = result.group(1)
 
         else:
-            next_page_token = response.headers.get("Link", None)
+            next_page_token = None
 
         return next_page_token
 
