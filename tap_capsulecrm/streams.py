@@ -1,9 +1,5 @@
 """Stream type classes for tap-capsulecrm."""
-
-from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Union
-
-from singer_sdk import typing as th  # JSON Schema typing helpers
+from singer_sdk import typing as th
 
 from tap_capsulecrm.client import CapsulecrmStream
 
@@ -14,7 +10,7 @@ class PartiesStream(CapsulecrmStream):
     name = "parties"
     path = "/parties"
     primary_keys = ["id"]
-    replication_key = None
+    replication_key = "updatedAt"
     records_jsonpath = "$.parties[*]"
     schema = th.PropertiesList(
         th.Property("id", th.NumberType),
@@ -102,7 +98,7 @@ class OpportunitiesStream(CapsulecrmStream):
     name = "opportunities"
     path = "/opportunities"
     primary_keys = ["id"]
-    replication_key = None
+    replication_key = "updatedAt"
     records_jsonpath = "$.opportunities[*]"
     schema = th.PropertiesList(
         th.Property("id", th.NumberType),

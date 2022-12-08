@@ -2,14 +2,10 @@
 
 from typing import List
 
-from singer_sdk import Tap, Stream
+from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
-from tap_capsulecrm.streams import (
-    CapsulecrmStream,
-    PartiesStream,
-    OpportunitiesStream,
-)
+from tap_capsulecrm.streams import OpportunitiesStream, PartiesStream
 
 STREAM_TYPES = [
     PartiesStream,
@@ -29,7 +25,6 @@ class TapCapsulecrm(Tap):
         th.Property("expires_in", th.IntegerType),
         th.Property("access_token", th.StringType),
     ).to_dict()
-
 
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""

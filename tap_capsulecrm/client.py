@@ -1,18 +1,13 @@
 """REST client handling, including CapsulecrmStream base class."""
 
 import re
-from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Optional
 
 import requests
-from memoization import cached
-from singer_sdk.authenticators import BearerTokenAuthenticator
-from singer_sdk.helpers.jsonpath import extract_jsonpath
+from pendulum import parse
 from singer_sdk.streams import RESTStream
 
 from tap_capsulecrm.auth import CapsulecrmAuthenticator
-
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
 class CapsulecrmStream(RESTStream):
@@ -22,11 +17,12 @@ class CapsulecrmStream(RESTStream):
 
     records_jsonpath = "$[*]"
 
-
     @property
     def authenticator(self) -> CapsulecrmAuthenticator:
         """Return a new authenticator object."""
-        return CapsulecrmAuthenticator(self, self._tap.config, "https://api.capsulecrm.com/oauth/token")
+        return CapsulecrmAuthenticator(
+            self, self._tap.config, "https://api.capsulecrm.com/oauth/token"
+        )
 
     @property
     def http_headers(self) -> dict:
@@ -49,16 +45,23 @@ class CapsulecrmStream(RESTStream):
 
         return next_page_token
 
+    def get_starting_time(self, context):
+        start_date = self.config.get("start_date")
+        if start_date:
+            start_date = parse(self.config.get("start_date"))
+        rep_key = self.get_starting_timestamp(context)
+        return rep_key or start_date
+
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
-        params["perPage"] = 2
+        params["perPage"] = 100
         if next_page_token:
             params["page"] = next_page_token
         if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+            start_date = self.get_starting_time(context)
+            if start_date:
+                params["since"] = start_date.isoformat()
         return params
-

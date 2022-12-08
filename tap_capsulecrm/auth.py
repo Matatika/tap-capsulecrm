@@ -1,16 +1,13 @@
 """Capsulecrmauth Authentication."""
 
-
-from singer_sdk.authenticators import OAuthAuthenticator, SingletonMeta
-
-import json
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Optional
 
 import requests
-from singer_sdk.authenticators import APIAuthenticatorBase
+from singer_sdk.authenticators import (
+    APIAuthenticatorBase,
+)
 from singer_sdk.streams import Stream as RESTStreamBase
-
 
 # The SingletonMeta metaclass makes your streams reuse the same authenticator instance.
 # If this behaviour interferes with your use-case, you can remove the metaclass.
@@ -110,4 +107,3 @@ class CapsulecrmAuthenticator(APIAuthenticatorBase):
 
         self._tap._config["access_token"] = token_json["access_token"]
         self._tap._config["expires_in"] = expires_in
-
