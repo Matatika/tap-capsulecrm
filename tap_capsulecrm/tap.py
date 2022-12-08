@@ -23,24 +23,13 @@ class TapCapsulecrm(Tap):
     name = "tap-capsulecrm"
 
     config_jsonschema = th.PropertiesList(
-        th.Property(
-            "auth_token",
-            th.StringType,
-            required=True,
-            description="The token to authenticate against the API service",
-        ),
-        th.Property(
-            "start_date",
-            th.DateTimeType,
-            description="The earliest record date to sync",
-        ),
-        th.Property(
-            "api_url",
-            th.StringType,
-            default="https://api.capsulecrm.com/api/v2",
-            description="The url for the API service",
-        ),
+        th.Property("client_id", th.StringType, required=True),
+        th.Property("client_secret", th.StringType, required=True),
+        th.Property("refresh_token", th.StringType, required=True),
+        th.Property("expires_in", th.IntegerType),
+        th.Property("access_token", th.StringType),
     ).to_dict()
+
 
     def discover_streams(self) -> List[Stream]:
         """Return a list of discovered streams."""

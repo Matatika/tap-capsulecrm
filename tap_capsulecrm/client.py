@@ -10,6 +10,8 @@ from singer_sdk.authenticators import BearerTokenAuthenticator
 from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
 
+from tap_capsulecrm.auth import CapsulecrmAuthenticator
+
 SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
@@ -19,14 +21,12 @@ class CapsulecrmStream(RESTStream):
     url_base = "https://api.capsulecrm.com/api/v2"
 
     records_jsonpath = "$[*]"
-    next_page_token_jsonpath = "$.next_page"
+
 
     @property
-    def authenticator(self) -> BearerTokenAuthenticator:
+    def authenticator(self) -> CapsulecrmAuthenticator:
         """Return a new authenticator object."""
-        return BearerTokenAuthenticator.create_for_stream(
-            self, token=self.config.get("auth_token")
-        )
+        return CapsulecrmAuthenticator(self, self._tap.config, "https://api.capsulecrm.com/oauth/token")
 
     @property
     def http_headers(self) -> dict:
@@ -45,7 +45,7 @@ class CapsulecrmStream(RESTStream):
             next_page_token = result.group(1)
 
         else:
-            next_page_token = response.headers.get("Link", None)
+            next_page_token = None
 
         return next_page_token
 
