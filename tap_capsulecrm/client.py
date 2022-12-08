@@ -1,16 +1,11 @@
 """REST client handling, including CapsulecrmStream base class."""
 
 import re
-from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, Optional
 
 import requests
-from memoization import cached
 from singer_sdk.authenticators import BearerTokenAuthenticator
-from singer_sdk.helpers.jsonpath import extract_jsonpath
 from singer_sdk.streams import RESTStream
-
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
 
 
 class CapsulecrmStream(RESTStream):
@@ -54,11 +49,10 @@ class CapsulecrmStream(RESTStream):
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
-        params["perPage"] = 2
+        params["perPage"] = 100
         if next_page_token:
             params["page"] = next_page_token
         if self.replication_key:
             params["sort"] = "asc"
             params["order_by"] = self.replication_key
         return params
-
