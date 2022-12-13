@@ -4,8 +4,10 @@ import re
 from typing import Any, Dict, Optional
 
 import requests
-from singer_sdk.authenticators import BearerTokenAuthenticator
+from pendulum import parse
 from singer_sdk.streams import RESTStream
+
+from tap_capsulecrm.auth import CapsulecrmAuthenticator
 
 
 class CapsulecrmStream(RESTStream):
@@ -14,13 +16,12 @@ class CapsulecrmStream(RESTStream):
     url_base = "https://api.capsulecrm.com/api/v2"
 
     records_jsonpath = "$[*]"
-    next_page_token_jsonpath = "$.next_page"
 
     @property
-    def authenticator(self) -> BearerTokenAuthenticator:
+    def authenticator(self) -> CapsulecrmAuthenticator:
         """Return a new authenticator object."""
-        return BearerTokenAuthenticator.create_for_stream(
-            self, token=self.config.get("auth_token")
+        return CapsulecrmAuthenticator(
+            self, self._tap.config, "https://api.capsulecrm.com/oauth/token"
         )
 
     @property
@@ -44,6 +45,13 @@ class CapsulecrmStream(RESTStream):
 
         return next_page_token
 
+    def get_starting_time(self, context):
+        start_date = self.config.get("start_date")
+        if start_date:
+            start_date = parse(self.config.get("start_date"))
+        rep_key = self.get_starting_timestamp(context)
+        return rep_key or start_date
+
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
@@ -53,6 +61,7 @@ class CapsulecrmStream(RESTStream):
         if next_page_token:
             params["page"] = next_page_token
         if self.replication_key:
-            params["sort"] = "asc"
-            params["order_by"] = self.replication_key
+            start_date = self.get_starting_time(context)
+            if start_date:
+                params["since"] = start_date.isoformat()
         return params
