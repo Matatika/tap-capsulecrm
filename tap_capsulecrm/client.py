@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 import requests
 from pendulum import parse
 from singer_sdk.streams import RESTStream
-
+from datetime import datetime, timedelta
 from tap_capsulecrm.auth import CapsulecrmAuthenticator
 
 
@@ -61,7 +61,7 @@ class CapsulecrmStream(RESTStream):
         if next_page_token:
             params["page"] = next_page_token
         if self.replication_key:
-            start_date = self.get_starting_time(context)
+            start_date = self.get_starting_time(context) + timedelta(seconds=1)
             if start_date:
-                params["since"] = start_date.isoformat()
+                params["since"] = start_date.isoformat() 
         return params
