@@ -5,8 +5,9 @@ from typing import Any, Dict, Optional
 
 import requests
 from pendulum import parse
+from pendulum.datetime import DateTime
 from singer_sdk.streams import RESTStream
-from datetime import datetime, timedelta
+from datetime import timedelta
 from tap_capsulecrm.auth import CapsulecrmAuthenticator
 
 
@@ -47,10 +48,8 @@ class CapsulecrmStream(RESTStream):
 
     def get_starting_time(self, context):
         start_date = self.config.get("start_date")
-        if start_date:
-            start_date = parse(self.config.get("start_date"))
-        rep_key = self.get_starting_timestamp(context)
-        return rep_key or start_date
+        start_date = parse(start_date) if start_date else DateTime.min
+        return self.get_starting_timestamp(context) or start_date
 
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
