@@ -19,9 +19,9 @@ class TapCapsulecrm(Tap):
     name = "tap-capsulecrm"
 
     config_jsonschema = th.PropertiesList(
-        th.Property("client_id", th.StringType, required=True),
-        th.Property("client_secret", th.StringType, required=True),
-        th.Property("refresh_token", th.StringType, required=True),
+        th.Property("client_id", th.StringType),
+        th.Property("client_secret", th.StringType),
+        th.Property("refresh_token", th.StringType),
         th.Property("expires_in", th.IntegerType),
         th.Property("access_token", th.StringType),
     ).to_dict()
