@@ -70,10 +70,9 @@ class CapsulecrmAuthenticator(APIAuthenticatorBase):
         access_token = self._tap._config.get("access_token")
         now = round(datetime.utcnow().timestamp())
         expires_in = self._tap._config.get("expires_in")
+        expired = access_token and expires_in and (expires_in - now < 60)
 
-        return not bool(
-            (not access_token) or (not expires_in) or ((expires_in - now) < 60)
-        )
+        return not expired
 
     @property
     def oauth_request_payload(self) -> dict:
