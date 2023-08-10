@@ -2,6 +2,7 @@
 
 import re
 from typing import Any, Dict, Optional
+from urllib.parse import parse_qsl, urlsplit
 
 import requests
 from pendulum import parse
@@ -37,10 +38,7 @@ class CapsulecrmStream(RESTStream):
     ) -> Optional[Any]:
         """Return a token for identifying next page or None if no more pages."""
         if response.headers.get("X-Pagination-Has-More") != "false":
-            next_page_token = response.headers.get("Link", None)
-            result = re.search("page=(.*)&", next_page_token)
-            next_page_token = result.group(1)
-
+            next_page_token = response.links.get("next")["url"]
         else:
             next_page_token = None
 
@@ -55,10 +53,12 @@ class CapsulecrmStream(RESTStream):
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
+        if next_page_token:
+            return dict(parse_qsl(urlsplit(next_page_token).query))
+
         params: dict = {}
         params["perPage"] = 100
-        if next_page_token:
-            params["page"] = next_page_token
+
         if self.replication_key:
             start_date = self.get_starting_time(context) + timedelta(seconds=1)
             if start_date:
