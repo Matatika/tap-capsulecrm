@@ -1,22 +1,32 @@
 # tap-capsulecrm
 
-`tap-capsulecrm` is a Singer tap for Capsulecrm.
+`tap-capsulecrm` is a Singer tap for Capsule.
 
 Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
 
 ## Installation
 
-- [ ] `Developer TODO:` Update the below as needed to correctly describe the install procedure. For instance, if you do not have a PyPi repo, or if you want users to directly install from your git repo, you can modify this step as appropriate.
-
 ```bash
-pipx install tap-capsulecrm
+# pip
+pip install git+https://github.com/Matatika/tap-capsulecrm
+
+# pipx
+pipx install git+https://github.com/Matatika/tap-capsulecrm
+
+# poetry
+poetry add git+https://github.com/Matatika/tap-capsulecrm
 ```
 
 ## Configuration
 
 ### Accepted Config Options
 
-- [ ] `Developer TODO:` Provide a list of config options accepted by the tap.
+Name | Required | Default | Description
+--- | --- | --- | ---
+`access_token` | Yes |  | Your Capsule access token
+`client_id` | No |  | Your Capsule client ID
+`client_secret` | No | | Your Capsule client secret
+`refresh_token` | No | | Your Capsule refresh token
 
 A full list of supported settings and capabilities for this
 tap is available by running:
@@ -33,7 +43,7 @@ environment variable is set either in the terminal context or in the `.env` file
 
 ### Source Authentication and Authorization
 
-- [ ] `Developer TODO:` If your tap requires special access on the source system, or any special authentication requirements, provide those here.
+You can find how to get your access token here: https://www.matatika.com/docs/instant-insights/tap-capsulecrm/prerequisites
 
 ## Usage
 
@@ -48,8 +58,6 @@ tap-capsulecrm --config CONFIG --discover > ./catalog.json
 ```
 
 ## Developer Resources
-
-- [ ] `Developer TODO:` As a first step, scan the entire project for the text "`TODO:`" and complete any recommended steps, deleting the "TODO" references once completed.
 
 ### Initialize your Development Environment
 
