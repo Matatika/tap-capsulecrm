@@ -5,7 +5,7 @@ from tap_capsulecrm.client import CapsulecrmStream
 
 
 class PartiesStream(CapsulecrmStream):
-    """Define custom stream."""
+    """Define Parties stream."""
 
     name = "parties"
     path = "/parties"
@@ -93,7 +93,7 @@ class PartiesStream(CapsulecrmStream):
 
 
 class OpportunitiesStream(CapsulecrmStream):
-    """Define custom stream."""
+    """Define Opportunities stream."""
 
     name = "opportunities"
     path = "/opportunities"
@@ -143,4 +143,63 @@ class OpportunitiesStream(CapsulecrmStream):
         th.Property("closedOn", th.StringType),
         th.Property("createdAt", th.DateTimeType),
         th.Property("name", th.StringType),
+    ).to_dict()
+
+
+class ProjectsStream(CapsulecrmStream):
+    """Define Projects stream."""
+
+    name = "projects"
+    path = "/kases"
+    primary_keys = ["id"]
+    replication_key = "updatedAt"
+    records_jsonpath = "$.kases[*]"
+    schema = th.PropertiesList(
+        th.Property("id", th.NumberType),
+        th.Property("createdAt", th.DateTimeType),
+        th.Property("updatedAt", th.DateTimeType),
+        th.Property("status", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("description", th.StringType),
+        th.Property("closedOn", th.StringType),
+        th.Property("expectedCloseOn", th.DateTimeType),
+        th.Property("lastContactedAt", th.DateTimeType),
+        th.Property(
+            "team",
+            th.ObjectType(
+                th.Property("id", th.IntegerType),
+            ),
+        ),
+        th.Property(
+            "opportunity",
+            th.ObjectType(
+                th.Property("id", th.IntegerType),
+            ),
+        ),
+        th.Property(
+            "owner",
+            th.ObjectType(
+                th.Property("id", th.IntegerType),
+                th.Property("deleted", th.BooleanType),
+                th.Property("name", th.StringType),
+                th.Property("pictureURL", th.StringType),
+                th.Property("username", th.StringType),
+            ),
+        ),
+        th.Property(
+            "party",
+            th.ObjectType(
+                th.Property("id", th.NumberType),
+                th.Property("type", th.StringType),
+                th.Property("name", th.StringType),
+                th.Property("pictureURL", th.StringType),
+            ),
+        ),
+        th.Property(
+            "stage",
+            th.ObjectType(
+                th.Property("id", th.NumberType),
+                th.Property("name", th.StringType),
+            ),
+        ),
     ).to_dict()
