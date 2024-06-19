@@ -1,4 +1,5 @@
 """Stream type classes for tap-capsulecrm."""
+
 from singer_sdk import typing as th
 
 from tap_capsulecrm.client import CapsulecrmStream
@@ -202,4 +203,37 @@ class ProjectsStream(CapsulecrmStream):
                 th.Property("name", th.StringType),
             ),
         ),
+        th.Property(
+            "tags",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property("id", th.NumberType),
+                    th.Property("name", th.StringType),
+                    th.Property("dataTag", th.BooleanType),
+                ),
+            ),
+        ),
+        th.Property(
+            "fields",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property("id", th.NumberType),
+                    th.Property(
+                        "definition",
+                        th.ObjectType(
+                            th.Property("id", th.NumberType),
+                            th.Property("name", th.StringType),
+                        ),
+                    ),
+                    th.Property("value", th.AnyType),
+                    th.Property("tagId", th.NumberType),
+                ),
+            ),
+        ),
     ).to_dict()
+
+    def get_url_params(self, context, next_page_token):
+        params = super().get_url_params(context, next_page_token)
+        params["embed"] = ",".join(["tags", "fields"])
+
+        return params
