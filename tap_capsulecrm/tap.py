@@ -5,12 +5,13 @@ from typing import List
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
-from tap_capsulecrm.streams import OpportunitiesStream, PartiesStream, ProjectsStream
+from tap_capsulecrm import streams
 
 STREAM_TYPES = [
-    OpportunitiesStream,
-    PartiesStream,
-    ProjectsStream,
+    streams.OpportunitiesStream,
+    streams.PartiesStream,
+    streams.ProjectsStream,
+    streams.ProjectPartiesStream,
 ]
 
 
