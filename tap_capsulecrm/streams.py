@@ -13,7 +13,7 @@ class PartiesStream(CapsulecrmStream):
     primary_keys = ["id"]
     replication_key = "updatedAt"
     records_jsonpath = "$.parties[*]"
-    schema = th.PropertiesList(
+    _properties = th.PropertiesList(
         th.Property("id", th.NumberType),
         th.Property("type", th.StringType),
         th.Property("about", th.StringType),
@@ -90,7 +90,8 @@ class PartiesStream(CapsulecrmStream):
             ),
         ),
         th.Property("pictureURL", th.StringType),
-    ).to_dict()
+    )
+    schema = _properties.to_dict()
 
 
 class OpportunitiesStream(CapsulecrmStream):
@@ -237,3 +238,19 @@ class ProjectsStream(CapsulecrmStream):
         params["embed"] = ("tags", "fields")
 
         return params
+
+    def get_child_context(self, record, context):
+        return {"project_id": record["id"]}
+
+
+class ProjectPartiesStream(CapsulecrmStream):
+    name = "project_parties"
+    parent_stream_type = ProjectsStream
+    path = "/kases/{project_id}/parties"
+    primary_keys = ["id", "project_id"]
+    replication_key = "updatedAt"
+    records_jsonpath = "$.parties[*]"
+    schema = th.PropertiesList(
+        *PartiesStream._properties.wrapped,
+        th.Property("project_id", th.NumberType),
+    ).to_dict()
