@@ -142,7 +142,7 @@ class OpportunitiesStream(CapsulecrmStream):
         th.Property("probability", th.NumberType),
         th.Property("durationBasis", th.StringType),
         th.Property("duration", th.StringType),
-        th.Property("closedOn", th.StringType),
+        th.Property("closedOn", th.DateTimeType),
         th.Property("createdAt", th.DateTimeType),
         th.Property("name", th.StringType),
     ).to_dict()
@@ -163,7 +163,7 @@ class ProjectsStream(CapsulecrmStream):
         th.Property("status", th.StringType),
         th.Property("name", th.StringType),
         th.Property("description", th.StringType),
-        th.Property("closedOn", th.StringType),
+        th.Property("closedOn", th.DateTimeType),
         th.Property("expectedCloseOn", th.DateTimeType),
         th.Property("lastContactedAt", th.DateTimeType),
         th.Property(
