@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tap-capsulecrm"
-version = "0.0.1"
+version = "0.5.0"
 description = "`tap-capsulecrm` is a Singer tap for Capsulecrm, built with the Meltano SDK for Singer Taps."
 authors = ["Hotglue"]
 keywords = [
