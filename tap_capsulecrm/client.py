@@ -1,14 +1,17 @@
 """REST client handling, including CapsulecrmStream base class."""
 
-import re
+from __future__ import annotations
+
+from datetime import timedelta
 from typing import Any, Dict, Optional
 from urllib.parse import parse_qsl, urlsplit
 
 import requests
 from pendulum import parse
 from pendulum.datetime import DateTime
+from singer_sdk import typing as th
 from singer_sdk.streams import RESTStream
-from datetime import timedelta
+
 from tap_capsulecrm.auth import CapsulecrmAuthenticator
 
 
@@ -62,5 +65,43 @@ class CapsulecrmStream(RESTStream):
         if self.replication_key:
             start_date = self.get_starting_time(context) + timedelta(seconds=1)
             if start_date:
-                params["since"] = start_date.isoformat() 
+                params["since"] = start_date.isoformat()
+
+        params["embed"] = ",".join(["tags", "fields"])
         return params
+
+    @property
+    def schema(self):
+        return th.PropertiesList(*self.get_properties()).to_dict()
+
+    @classmethod
+    def get_properties(cls) -> tuple[th.Property]:
+        return (
+            th.Property(
+                "tags",
+                th.ArrayType(
+                    th.ObjectType(
+                        th.Property("id", th.NumberType),
+                        th.Property("name", th.StringType),
+                        th.Property("dataTag", th.BooleanType),
+                    ),
+                ),
+            ),
+            th.Property(
+                "fields",
+                th.ArrayType(
+                    th.ObjectType(
+                        th.Property("id", th.NumberType),
+                        th.Property(
+                            "definition",
+                            th.ObjectType(
+                                th.Property("id", th.NumberType),
+                                th.Property("name", th.StringType),
+                            ),
+                        ),
+                        th.Property("value", th.AnyType),
+                        th.Property("tagId", th.NumberType),
+                    ),
+                ),
+            ),
+        )
