@@ -9,6 +9,7 @@ from tap_capsulecrm import streams
 
 STREAM_TYPES = [
     streams.OpportunitiesStream,
+    streams.OpportunityPartiesStream,
     streams.PartiesStream,
     streams.ProjectsStream,
     streams.ProjectPartiesStream,

@@ -155,6 +155,9 @@ class OpportunitiesStream(CapsulecrmStream):
             *super().get_properties(),
         )
 
+    def get_child_context(self, record, context):
+        return {"opportunity_id": record["id"]}
+
 
 class ProjectsStream(CapsulecrmStream):
     """Define Projects stream."""
@@ -222,7 +225,21 @@ class ProjectsStream(CapsulecrmStream):
         return {"project_id": record["id"]}
 
 
-class ProjectPartiesStream(CapsulecrmStream):
+class OpportunityPartiesStream(PartiesStream):
+    name = "opportunity_parties"
+    parent_stream_type = OpportunitiesStream
+    path = "/opportunities/{opportunity_id}/parties"
+    primary_keys = ["id", "opportunity_id"]
+
+    @classmethod
+    def get_properties(cls):
+        return (
+            *PartiesStream.get_properties(),
+            th.Property("opportunity_id", th.NumberType),
+        )
+
+
+class ProjectPartiesStream(PartiesStream):
     name = "project_parties"
     parent_stream_type = ProjectsStream
     path = "/kases/{project_id}/parties"
