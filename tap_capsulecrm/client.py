@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from functools import cached_property
 from typing import Any, Dict, Optional
 from urllib.parse import parse_qsl, urlsplit
 
@@ -70,7 +71,7 @@ class CapsulecrmStream(RESTStream):
         params["embed"] = ",".join(["tags", "fields"])
         return params
 
-    @property
+    @cached_property
     def schema(self):
         return th.PropertiesList(*self.get_properties()).to_dict()
 
