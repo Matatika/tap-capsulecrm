@@ -23,12 +23,10 @@ class CapsulecrmStream(RESTStream):
 
     records_jsonpath = "$[*]"
 
-    @property
+    @cached_property
     def authenticator(self) -> CapsulecrmAuthenticator:
         """Return a new authenticator object."""
-        return CapsulecrmAuthenticator(
-            self, self._tap.config, "https://api.capsulecrm.com/oauth/token"
-        )
+        return CapsulecrmAuthenticator(self)
 
     @property
     def http_headers(self) -> dict:
