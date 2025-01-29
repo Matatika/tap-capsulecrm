@@ -8,8 +8,6 @@ from typing import Any, Dict, Optional
 from urllib.parse import parse_qsl, urlsplit
 
 import requests
-from pendulum import parse
-from pendulum.datetime import DateTime
 from singer_sdk import typing as th
 from singer_sdk.streams import RESTStream
 
@@ -46,11 +44,6 @@ class CapsulecrmStream(RESTStream):
 
         return next_page_token
 
-    def get_starting_time(self, context):
-        start_date = self.config.get("start_date")
-        start_date = parse(start_date) if start_date else DateTime.min
-        return self.get_starting_timestamp(context) or start_date
-
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
@@ -62,9 +55,10 @@ class CapsulecrmStream(RESTStream):
         params["perPage"] = 100
 
         if self.replication_key:
-            start_date = self.get_starting_time(context) + timedelta(seconds=1)
+            # from state, or otherwise config
+            start_date = self.get_starting_timestamp(context)
             if start_date:
-                params["since"] = start_date.isoformat()
+                params["since"] = (start_date + timedelta(seconds=1)).isoformat()
 
         params["embed"] = ",".join(["tags", "fields"])
         return params
