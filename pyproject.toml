@@ -15,7 +15,7 @@ requests = "^2.32.5"
 singer-sdk = "^0.48.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^8.4.1"
+pytest = "^8.4.2"
 tox = "^4.29.0"
 flake8 = "^7.3.0"
 black = "^25.1"
